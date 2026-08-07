@@ -5,6 +5,8 @@ using BCrypt.Net;
 using ECommerceApi.Data;
 using Microsoft.EntityFrameworkCore;
 using ECommerceApi.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerceApi.Controllers
 {
@@ -12,14 +14,21 @@ namespace ECommerceApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly UserManager<User> _userManager;
+
+        private readonly SignInManager<User> _signInManager;
+        
+        
         private readonly JwtService _jwtService;
 
-        private readonly AppDbContext _context;
+        
 
-        public AuthController(AppDbContext context, JwtService jwtService)
+        public AuthController( JwtService jwtService, UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _context = context;
+            
             _jwtService = jwtService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [HttpPost("register")]
@@ -34,32 +43,22 @@ namespace ECommerceApi.Controllers
                 }
                 
                 string normalizedEmail = dto.Email.Trim().ToLower();
-                
-                
-                if(await _context.Users.AnyAsync( u => u.Email == normalizedEmail))     
+
+                var user = new User { Email = normalizedEmail, UserName = dto.Username, Role = "Customer" };
+
+                var response = await _userManager.CreateAsync(user,dto.Password);
+
+                if (!response.Succeeded)
                 {
-                    return StatusCode(400, new { error = "This email already exists"});
+                    return BadRequest(response.Errors);
                 }
-                
-                if(await _context.Users.AnyAsync( u => u.Username == dto.Username))
-                {
-                    return StatusCode(400, new { error = "This username already exists" });
-                }
-                
-                string hash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-                User user = new User { Email = normalizedEmail, PasswordHash = hash, Username = dto.Username, Role = "Customer" };
-
-                _context.Users.Add(user);
-
-                var response = await _context.SaveChangesAsync();
-
-                return Created("", new {user.Id, user.Email, user.Username} );
+                return Created("", new {user.Id, user.Email, user.UserName } );
                 
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                return StatusCode(500, new { error = "Something went wrong" });
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -69,15 +68,16 @@ namespace ECommerceApi.Controllers
         {
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == dto.Username);
+                var user = await _userManager.FindByNameAsync(dto.Username);
 
                 if(user == null)
                 {
                     return Unauthorized(new { error = "Invalid username or password" });
                 }
 
-                bool passwordValid = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
-                if (!passwordValid)
+                var passwordResult = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: false);
+                
+                if(!passwordResult.Succeeded)
                 {
                     return Unauthorized(new { error = "Invalid username or password" });
                 }
@@ -88,10 +88,19 @@ namespace ECommerceApi.Controllers
                     token = token
                 });
             }
-            catch(Exception)
+            catch(Exception ex )
             {
                 return StatusCode(500, new { error = "Something went wrong" });
             }
+        }
+
+        [Authorize]
+
+        [HttpGet("testLogin")]
+
+        public IActionResult testLogin()
+        {
+            return Ok(new { message = "You are authenticated!", user = User.Identity?.Name });
         }
     }
 }

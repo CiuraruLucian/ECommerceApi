@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ECommerceApi.Services;
+using ECommerceApi.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 Encoding.UTF8.GetBytes(key!))
         };
     });
+
+builder.Services.AddIdentity<User, IdentityRole>( options => { options.User.RequireUniqueEmail = true; })
+    .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
 builder.Services.AddDbContext<AppDbContext>( options => options.UseSqlite("Data Source = ecommerce.db"));
 
