@@ -88,7 +88,7 @@ namespace ECommerceApi.Controllers
                     token = token
                 });
             }
-            catch(Exception ex )
+            catch(Exception)
             {
                 return StatusCode(500, new { error = "Something went wrong" });
             }
@@ -100,6 +100,7 @@ namespace ECommerceApi.Controllers
 
         public IActionResult testLogin()
         {
+            
             return Ok(new { message = "You are authenticated!", user = User.Identity?.Name });
         }
     }
