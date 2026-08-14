@@ -7,6 +7,8 @@ using ECommerceApi.Services;
 using ECommerceApi.Models;
 using Microsoft.AspNetCore.Identity;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -53,6 +55,21 @@ builder.Services.AddControllers();
 
 
 var app = builder.Build();
+
+using var scope = app.Services.CreateScope();
+
+var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+var roles = new[] { "Admin", "Customer" };
+
+foreach (var role in roles)
+{
+    if(!await roleManager.RoleExistsAsync(role))
+    {
+        await roleManager.CreateAsync(new IdentityRole(role));
+    }
+}
+
 
 app.UseHttpsRedirection();
 

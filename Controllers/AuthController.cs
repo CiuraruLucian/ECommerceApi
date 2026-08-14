@@ -44,7 +44,7 @@ namespace ECommerceApi.Controllers
                 
                 string normalizedEmail = dto.Email.Trim().ToLower();
 
-                var user = new User { Email = normalizedEmail, UserName = dto.Username, Role = "Customer" };
+                var user = new User { Email = normalizedEmail, UserName = dto.Username };
 
                 var response = await _userManager.CreateAsync(user,dto.Password);
 
@@ -52,6 +52,8 @@ namespace ECommerceApi.Controllers
                 {
                     return BadRequest(response.Errors);
                 }
+
+                await _userManager.AddToRoleAsync(user, "Customer");
 
                 return Created("", new {user.Id, user.Email, user.UserName } );
                 
@@ -82,7 +84,7 @@ namespace ECommerceApi.Controllers
                     return Unauthorized(new { error = "Invalid username or password" });
                 }
 
-                var token = _jwtService.GenerateToken(user);
+                var token = await _jwtService.GenerateToken(user);
                 return Ok(new
                 {
                     token = token

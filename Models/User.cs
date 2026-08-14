@@ -5,7 +5,7 @@ namespace ECommerceApi.Models
     public class User : IdentityUser
     {
 
-        public string Role { get; set; } = "Customer";
+        public string Role { get; set; }
 
         
     }
