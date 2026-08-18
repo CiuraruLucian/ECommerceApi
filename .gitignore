@@ -34,3 +34,8 @@ venv/
 
 # Local development settings
 appsettings.Development.json
+
+# Database
+*.db
+*.db-shm
+*.db-wal
