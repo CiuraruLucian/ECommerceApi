@@ -11,7 +11,7 @@ namespace ECommerceApi.Models
         
         public string NormalizedName { get; set; } = string.Empty;
 
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
 
         public decimal Price { get; set; }
 
