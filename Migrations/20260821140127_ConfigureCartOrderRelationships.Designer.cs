@@ -3,6 +3,7 @@ using System;
 using ECommerceApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260821140127_ConfigureCartOrderRelationships")]
+    partial class ConfigureCartOrderRelationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
@@ -74,7 +77,8 @@ namespace ECommerceApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Order");
                 });
@@ -360,8 +364,8 @@ namespace ECommerceApi.Migrations
             modelBuilder.Entity("ECommerceApi.Models.Order", b =>
                 {
                     b.HasOne("ECommerceApi.Models.User", null)
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
+                        .WithOne("Order")
+                        .HasForeignKey("ECommerceApi.Models.Order", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -451,7 +455,8 @@ namespace ECommerceApi.Migrations
                     b.Navigation("Cart")
                         .IsRequired();
 
-                    b.Navigation("Orders");
+                    b.Navigation("Order")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

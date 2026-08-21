@@ -25,32 +25,8 @@ namespace ECommerceApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
-
-            modelBuilder.Entity<Product>()
-            .Property(entity => entity.Name)
-            .IsRequired()
-            .HasMaxLength(100);
-
-            modelBuilder.Entity<Product>()
-             .Property(entity => entity.NormalizedName)
-             .IsRequired()
-             .HasMaxLength(100);
-
-            modelBuilder.Entity<Product>()
-             .HasIndex(entity => entity.NormalizedName)
-             .IsUnique();
-
-            modelBuilder.Entity<Product>()
-              .Property(entity => entity.Description)
-              .HasMaxLength(500);
-
-            modelBuilder.Entity<Product>()
-                .Property(entity => entity.Price)
-                .IsRequired()
-                .HasColumnType("decimal(18,2)");
-            modelBuilder.Entity<Product>()
-                 .Property(entity => entity.Stock)
-                 .IsRequired();
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            
         }
 
         #endregion

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ECommerceApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using ECommerceApi.DTOs;
 
 namespace ECommerceApi.Controllers
 {

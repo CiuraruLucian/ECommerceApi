@@ -1,4 +1,4 @@
-﻿namespace ECommerceApi.Models
+﻿namespace ECommerceApi.DTOs
 {
     public class AssignRoleDto
     {

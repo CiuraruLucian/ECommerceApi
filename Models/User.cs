@@ -5,5 +5,7 @@ namespace ECommerceApi.Models
     public class User : IdentityUser
     {
         public Cart Cart { get; set; } = null!;
+
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }
