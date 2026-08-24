@@ -19,6 +19,38 @@ namespace ECommerceApi.Data
                 return Set<Product>();
             }
         }
+
+        public DbSet<Cart> Carts
+        {
+            get
+            {
+                return Set<Cart>();
+            }
+        }
+
+        public DbSet<CartItem> CartItems
+        {
+            get
+            {
+                return Set<CartItem>();
+            }
+        }
+
+        public DbSet<Order> Orders
+        {
+            get
+            {
+                return Set<Order>();
+            }
+        }
+
+        public DbSet<OrderItem> OrderItems
+        {
+            get
+            {
+                return Set<OrderItem>();
+            }
+        }
         
         #region Required
         protected override void OnModelCreating(ModelBuilder modelBuilder)

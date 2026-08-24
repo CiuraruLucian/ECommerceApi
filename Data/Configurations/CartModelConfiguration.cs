@@ -13,6 +13,7 @@ namespace ECommerceApi.Data.Configurations
                 .WithOne(u => u.Cart)
                 .HasForeignKey<Cart>(u => u.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }
