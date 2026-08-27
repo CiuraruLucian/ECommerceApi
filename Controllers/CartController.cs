@@ -42,7 +42,12 @@ namespace ECommerceApi.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var cart = await GetOrCreateCartAsync(userId);
-            return Ok(cart);
+            return Ok(new
+            {
+                cart.Id,
+                cart.UserId,
+                Items = cart.Items.Select(i => new { i.Id, i.ProductId, i.Quantity })
+            });
         }
 
         [HttpPost]
@@ -84,8 +89,13 @@ namespace ECommerceApi.Controllers
                 }
                 
                 await _context.SaveChangesAsync();
-                return Ok(cart);
-              
+                return Ok(new
+                {
+                    cart.Id,
+                    cart.UserId,
+                    Items = cart.Items.Select(i => new { i.Id, i.ProductId, i.Quantity })
+                });
+
 
             }
             catch (Exception) 
@@ -93,5 +103,27 @@ namespace ECommerceApi.Controllers
                 return StatusCode(500, new { error = "Something went wrong" });
             }
         }
+        [HttpDelete("{productId}")]
+
+        public async Task<IActionResult> RemoveItem(int productId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var cart = await GetOrCreateCartAsync(userId);
+
+            var item = cart.Items.FirstOrDefault(ci => ci.ProductId == productId);
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            _context.CartItems.Remove(item);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Item removed from cart." });
+
+
+        }
+
     }
 }
