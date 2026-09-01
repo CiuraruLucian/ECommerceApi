@@ -68,11 +68,14 @@ namespace ECommerceApi.Controllers
                 {
                     Amount = (long)(total * 100),
                     Currency = "gbp",
+                    PaymentMethodTypes = new List<string> { "card" }
                 };
 
                 var service = new PaymentIntentService();
 
                 PaymentIntent intent = await service.CreateAsync(options);
+
+
 
                 var order = new Order
                 {
@@ -94,5 +97,33 @@ namespace ECommerceApi.Controllers
                 return StatusCode(500, new {error = "Something went wrong."});
             }
         }
+
+        [HttpPost("{id}/confirm-payment")]
+
+        public async Task<IActionResult> ConfirmPayment(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var order = await _context.Orders.FirstOrDefaultAsync(o =>  o.Id == id && o.UserId == userId);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var service = new PaymentIntentService();
+
+            var intent = await service.GetAsync(order.PaymentIntentId);
+
+            if(intent.Status == "succeeded")
+            {
+                order.Status = "Paid";
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok( new { order.Id, order.Status, stripeStatus = intent.Status  });
+
+        }
+
     }
 }
