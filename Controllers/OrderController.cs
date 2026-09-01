@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using System.Security.Claims;
 
 namespace ECommerceApi.Controllers
@@ -63,18 +64,30 @@ namespace ECommerceApi.Controllers
                     total += product.Price * cartItem.Quantity;
                 }
 
+                var options = new PaymentIntentCreateOptions
+                {
+                    Amount = (long)(total * 100),
+                    Currency = "gbp",
+                };
+
+                var service = new PaymentIntentService();
+
+                PaymentIntent intent = await service.CreateAsync(options);
+
                 var order = new Order
                 {
                     UserId = userId,
                     Total = total,
-                    Items = orderItems
+                    Items = orderItems,
+                    PaymentIntentId = intent.Id,
+                    Status = "Pending"
                 };
 
                 _context.Orders.Add(order);
                 _context.CartItems.RemoveRange(cart.Items);
                 await _context.SaveChangesAsync();
 
-                return Ok(new { order.Id, order.Total, Items = orderItems });
+                return Ok(new { order.Id, order.Total, clientSecret = intent.ClientSecret, order.Status, Items = orderItems.Select(i => new { i.ProductId, i.ProductName, i.UnitPrice, i.Quantity }) });
             }
             catch (Exception)
             {

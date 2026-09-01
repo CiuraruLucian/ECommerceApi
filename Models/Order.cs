@@ -8,6 +8,9 @@
 
         public decimal Total { get; set; }
 
+        public string? PaymentIntentId { get; set; }
+
+        public string Status { get; set; }
         public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
     }
 }

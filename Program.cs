@@ -88,6 +88,7 @@ foreach (var role in roles)
     }
 }
 
+Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 app.UseHttpsRedirection();
 
