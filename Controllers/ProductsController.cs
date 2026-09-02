@@ -40,6 +40,22 @@ namespace ECommerceApi.Controllers
             return Ok(product);
         }
 
+        [HttpGet("search")]
+
+        public async Task<IActionResult> Search([FromQuery] string query)
+        {
+            var normalizedQuery = query.Trim().ToLower();
+
+            var products = await _context.Products.Where(p => p.NormalizedName.Contains(normalizedQuery)).ToListAsync();
+
+            if(!products.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(products);
+        }
+
         [Authorize(Roles = "Admin")]
 
         [HttpPost]

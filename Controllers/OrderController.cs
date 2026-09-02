@@ -21,6 +21,58 @@ namespace ECommerceApi.Controllers
             _context = context;
         }
 
+        [HttpGet]
+
+        public async Task<IActionResult> GetMyOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var orders = await _context.Orders
+                .Include(o => o.Items)
+                .Where(o => o.UserId == userId)
+                .Select(o => new
+                {
+                    o.Id,
+                    o.Total,
+                    o.Status,
+                    Items = o.Items.Select(i => new { i.ProductName, i.UnitPrice, i.Quantity })
+                })
+                .ToListAsync();
+
+            if (!orders.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(orders);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var order = await _context.Orders
+                .Include(o => o.Items)
+                .Where(o => o.Id == id && o.UserId == userId)
+                .Select(o => new
+                {
+                    o.Id,
+                    o.Total,
+                    o.Status,
+                    Items = o.Items.Select(i => new { i.ProductName, i.UnitPrice, i.Quantity })
+                })
+                .ToListAsync();
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return Ok(order);
+        }
+
+
+
+
         [HttpPost("checkout")]
 
         public async  Task<IActionResult> Checkout()
