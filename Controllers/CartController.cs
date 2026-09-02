@@ -98,7 +98,7 @@ namespace ECommerceApi.Controllers
 
 
             }
-            catch (Exception) 
+            catch (Exception ex) 
             {
                 return StatusCode(500, new { error = "Something went wrong" });
             }
