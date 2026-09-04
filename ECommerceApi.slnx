@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="ECommerceApi.csproj" />
-  <Project Path="ECommerceApi.Tests/ECommerceApi.Tests.csproj" Id="3c22b247-0c05-47de-a759-18f6f087eb6e" />
-</Solution>
