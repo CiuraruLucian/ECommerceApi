@@ -1,0 +1,16 @@
+<%- include('partials/header') %>
+
+<h1>Products</h1>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search products...">
+  <button id="searchBtn">Search</button>
+  <button id="clearSearchBtn">Clear</button>
+</div>
+
+<div id="productGrid" class="product-grid"></div>
+<p id="statusMsg" class="hidden"></p>
+
+<script src="/js/products.js"></script>
+
+<%- include('partials/footer') %>

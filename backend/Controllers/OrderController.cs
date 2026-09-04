@@ -111,6 +111,10 @@ namespace ECommerceApi.Controllers
                         Quantity = cartItem.Quantity
 
                     };
+                    if (product.Stock < cartItem.Quantity)
+                    {
+                        return BadRequest(new { error = $"Insufficient stock for {product.Name}" });
+                    }
 
                     product.Stock -= cartItem.Quantity;
 

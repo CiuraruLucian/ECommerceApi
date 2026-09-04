@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %> | ECommerce</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Load shared frontend code before page-specific scripts. -->
+  <script src="/js/config.js"></script>
+  <script src="/js/nav.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/products" class="brand">ECommerceApi</a>
+    <div class="nav-links">
+      <a href="/products">Products</a>
+      <a href="/cart">Cart</a>
+      <a href="/orders">Orders</a>
+      <a href="/admin" id="adminLink" class="hidden">Admin</a>
+      <span id="authArea"></span>
+    </div>
+  </nav>
+  <main class="container">
