@@ -61,7 +61,10 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["Redis:Connection"];
+});
 builder.Services.AddDbContext<AppDbContext>( options => options.UseSqlite("Data Source = ecommerce.db"));
 
 builder.Services.AddScoped<JwtService>();

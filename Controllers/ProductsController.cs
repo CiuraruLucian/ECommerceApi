@@ -5,17 +5,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using Microsoft.Extensions.Caching.Distributed;
+
 namespace ECommerceApi.Controllers
+
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        readonly AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public ProductsController(AppDbContext context)
+        private readonly IDistributedCache _cache;
+
+        public ProductsController(AppDbContext context, IDistributedCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
 
@@ -24,7 +31,16 @@ namespace ECommerceApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            var cachedProducts = await _cache.GetStringAsync("products_all");
+
+            if(cachedProducts != null)
+            {
+                return Ok(JsonSerializer.Deserialize<List<Product>>(cachedProducts));
+            }
             var products = await _context.Products.ToListAsync();
+
+            await _cache.SetStringAsync("products_all", JsonSerializer.Serialize(products),
+                new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) });
             return Ok(products);
         }
 
@@ -84,6 +100,8 @@ namespace ECommerceApi.Controllers
 
                 var response = await _context.SaveChangesAsync();
 
+                await _cache.RemoveAsync("products_all");
+
                 return Created("", new { product.Id, product.Name, product.Description, product.Price, product.Stock });
             
             }
@@ -124,7 +142,9 @@ namespace ECommerceApi.Controllers
                 product.Stock = dto.Stock;
             }
             await _context.SaveChangesAsync();
-            
+
+            await _cache.RemoveAsync("products_all");
+
             return Ok(new { product.Id, product.Name, product.Description, product.Price, product.Stock });
 
 
@@ -143,6 +163,8 @@ namespace ECommerceApi.Controllers
             _context.Products.Remove(product);
 
             await _context.SaveChangesAsync();
+
+            await _cache.RemoveAsync("products_all");
 
             return Ok(new { message = "Product deleted successfully." });
         }
