@@ -8,9 +8,11 @@ using ECommerceApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using ECommerceApi.DTOs;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace ECommerceApi.Controllers
 {
+    [EnableRateLimiting("AuthPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase

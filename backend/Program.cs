@@ -6,10 +6,24 @@ using System.Text;
 using ECommerceApi.Services;
 using ECommerceApi.Models;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddFixedWindowLimiter(policyName: "AuthPolicy", options =>
+    {
+        options.PermitLimit = 5;
+        options.Window = TimeSpan.FromMinutes(5);
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = 2;
+    });
+});
 
 
 builder.Services.AddIdentity<User, IdentityRole>( options => { options.User.RequireUniqueEmail = true; })
@@ -83,6 +97,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseCors("AllowFrontend");
+
+app.UseRateLimiter();
+
 using var scope = app.Services.CreateScope();
 
 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -100,8 +118,6 @@ foreach (var role in roles)
 Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 
