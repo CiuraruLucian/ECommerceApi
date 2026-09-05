@@ -9,12 +9,17 @@ if (loginForm) {
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
+
+    if(res.status === 429) {
+      errorMsg.textContent = 'Too many login attempts. Please try again later.';
+      errorMsg.classList.remove('hidden');
+      return;
+    }
 
     if (!res.ok) {
       errorMsg.textContent = 'Invalid username or password.';
@@ -45,6 +50,12 @@ if (registerForm) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, username, password })
     });
+    
+    if(res.status === 429) {
+      errorMsg.textContent = 'Too many login attempts. Please try again later.';
+      errorMsg.classList.remove('hidden');
+      return;
+    }
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
