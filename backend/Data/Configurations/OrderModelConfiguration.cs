@@ -13,6 +13,11 @@ namespace ECommerceApi.Data.Configurations
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+<<<<<<< HEAD
+=======
+            builder.Property(o => o.Total)
+                .HasColumnType("decimal(18,2)");
+>>>>>>> dev
         }
     }
 }

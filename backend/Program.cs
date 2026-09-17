@@ -8,7 +8,12 @@ using ECommerceApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+<<<<<<< HEAD
 
+=======
+using Azure.Identity;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+>>>>>>> dev
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,8 +84,13 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration["Redis:Connection"];
 });
+<<<<<<< HEAD
 builder.Services.AddDbContext<AppDbContext>( options => options.UseSqlite("Data Source = ecommerce.db"));
 
+=======
+
+builder.Services.AddDbContext<AppDbContext>( options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+>>>>>>> dev
 builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddOpenApi();
@@ -90,11 +100,22 @@ builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
+<<<<<<< HEAD
         policy.WithOrigins("http://localhost:3000",
                           "https://ecommerce-frontend-lucianc-hjh9aahweddxbwgj.switzerlandnorth-01.azurewebsites.net")
               .AllowAnyMethod()
               .AllowAnyHeader());
 });
+=======
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
+
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://ecommerceapi-kv-lucianc.vault.azure.net/"),
+    new DefaultAzureCredential());
+>>>>>>> dev
 
 var app = builder.Build();
 

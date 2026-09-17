@@ -3,10 +3,8 @@ using System;
 using ECommerceApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-<<<<<<< HEAD
-=======
 using Microsoft.EntityFrameworkCore.Metadata;
->>>>>>> dev
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -14,32 +12,23 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260916130455_InitialSqlServer")]
+    partial class InitialSqlServer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-<<<<<<< HEAD
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
-=======
             modelBuilder
                 .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
->>>>>>> dev
 
             modelBuilder.Entity("ECommerceApi.Models.Cart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-<<<<<<< HEAD
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -47,7 +36,6 @@ namespace ECommerceApi.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
->>>>>>> dev
 
                     b.HasKey("Id");
 
@@ -61,18 +49,6 @@ namespace ECommerceApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-<<<<<<< HEAD
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CartId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
-=======
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -85,7 +61,6 @@ namespace ECommerceApi.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
->>>>>>> dev
 
                     b.HasKey("Id");
 
@@ -100,23 +75,6 @@ namespace ECommerceApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-<<<<<<< HEAD
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("PaymentIntentId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -134,7 +92,6 @@ namespace ECommerceApi.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
->>>>>>> dev
 
                     b.HasKey("Id");
 
@@ -147,22 +104,6 @@ namespace ECommerceApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-<<<<<<< HEAD
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
-=======
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -179,7 +120,6 @@ namespace ECommerceApi.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
->>>>>>> dev
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
@@ -195,13 +135,6 @@ namespace ECommerceApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-<<<<<<< HEAD
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -209,35 +142,22 @@ namespace ECommerceApi.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
->>>>>>> dev
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-<<<<<<< HEAD
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("nvarchar(100)");
->>>>>>> dev
 
                     b.Property<string>("NormalizedName")
                         .IsRequired()
                         .HasMaxLength(100)
-<<<<<<< HEAD
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("nvarchar(100)");
->>>>>>> dev
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Stock")
-<<<<<<< HEAD
-                        .HasColumnType("INTEGER");
-=======
                         .HasColumnType("int");
->>>>>>> dev
 
                     b.HasKey("Id");
 
@@ -250,56 +170,6 @@ namespace ECommerceApi.Migrations
             modelBuilder.Entity("ECommerceApi.Models.User", b =>
                 {
                     b.Property<string>("Id")
-<<<<<<< HEAD
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
@@ -348,7 +218,6 @@ namespace ECommerceApi.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
->>>>>>> dev
 
                     b.HasKey("Id");
 
@@ -357,12 +226,8 @@ namespace ECommerceApi.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-<<<<<<< HEAD
-                        .HasDatabaseName("UserNameIndex");
-=======
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
->>>>>>> dev
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -370,21 +235,6 @@ namespace ECommerceApi.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-<<<<<<< HEAD
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -398,18 +248,13 @@ namespace ECommerceApi.Migrations
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
->>>>>>> dev
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-<<<<<<< HEAD
-                        .HasDatabaseName("RoleNameIndex");
-=======
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
->>>>>>> dev
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -418,19 +263,6 @@ namespace ECommerceApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-<<<<<<< HEAD
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -444,7 +276,6 @@ namespace ECommerceApi.Migrations
                     b.Property<string>("RoleId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
->>>>>>> dev
 
                     b.HasKey("Id");
 
@@ -457,19 +288,6 @@ namespace ECommerceApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-<<<<<<< HEAD
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -483,7 +301,6 @@ namespace ECommerceApi.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
->>>>>>> dev
 
                     b.HasKey("Id");
 
@@ -495,19 +312,6 @@ namespace ECommerceApi.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-<<<<<<< HEAD
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ProviderKey")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
@@ -519,7 +323,6 @@ namespace ECommerceApi.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
->>>>>>> dev
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -531,17 +334,10 @@ namespace ECommerceApi.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-<<<<<<< HEAD
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
->>>>>>> dev
 
                     b.HasKey("UserId", "RoleId");
 
@@ -553,18 +349,6 @@ namespace ECommerceApi.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-<<<<<<< HEAD
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("TEXT");
-=======
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
@@ -575,7 +359,6 @@ namespace ECommerceApi.Migrations
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
->>>>>>> dev
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 

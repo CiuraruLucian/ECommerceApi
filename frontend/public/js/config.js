@@ -1,6 +1,10 @@
 // Change this if your API runs on a different port/host
+<<<<<<< HEAD
 const API_BASE = 'https://ecommerceapi-lucianc-f2cyhpc8gshuhbhb.switzerlandnorth-01.azurewebsites.net/api';
 
+=======
+const API_BASE = 'https://localhost:7224/api';
+>>>>>>> dev
 
 function getToken() {
   return localStorage.getItem('jwt_token');
