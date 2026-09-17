@@ -8,7 +8,8 @@ using ECommerceApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
-
+using Azure.Identity;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,6 +95,10 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
               .AllowAnyHeader());
 });
+
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://ecommerceapi-kv-lucianc.vault.azure.net/"),
+    new DefaultAzureCredential());
 
 var app = builder.Build();
 
