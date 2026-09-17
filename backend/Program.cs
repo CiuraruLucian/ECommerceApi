@@ -91,11 +91,17 @@ builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
-        policy.WithOrigins("http://localhost:3000",
-                          "https://ecommerce-frontend-lucianc-hjh9aahweddxbwgj.switzerlandnorth-01.azurewebsites.net")
-              .AllowAnyMethod()
-              .AllowAnyHeader());
+    {
+        policy
+            .WithOrigins(
+                "http://localhost:3000",
+                "https://ecommerce-frontend-lucianc-hjh9aahweddxbwgj.switzerlandnorth-01.azurewebsites.net"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
+
 
 builder.Configuration.AddAzureKeyVault(
     new Uri("https://ecommerceapi-kv-lucianc.vault.azure.net/"),
