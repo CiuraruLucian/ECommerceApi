@@ -5,6 +5,15 @@
 <button id="checkoutBtn" class="hidden">Checkout</button>
 <p id="statusMsg" class="hidden"></p>
 
+<div id="paymentSection" class="hidden">
+  <h2>Payment</h2>
+  <p id="paymentSummary"></p>
+  <div id="payment-element"></div>
+  <button id="payBtn">Pay now</button>
+  <p id="payMsg" class="hidden"></p>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
 <script src="/js/cart.js"></script>
 
 <%- include('partials/footer') %>

@@ -2,6 +2,10 @@
 
 const API_BASE = 'https://ecommerceapi-lucianc-f2cyhpc8gshuhbhb.switzerlandnorth-01.azurewebsites.net/api';
 
+// Stripe publishable key (safe to expose in the browser). Must belong to the same
+// Stripe account and mode (test/live) as the backend's Stripe:SecretKey.
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_REPLACE_ME';
+
 function getToken() {
   return localStorage.getItem('jwt_token');
 }

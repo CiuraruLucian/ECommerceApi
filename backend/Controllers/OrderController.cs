@@ -150,8 +150,9 @@ namespace ECommerceApi.Controllers
 
                 return Ok(new { order.Id, order.Total, clientSecret = intent.ClientSecret, order.Status, Items = orderItems.Select(i => new { i.ProductId, i.ProductName, i.UnitPrice, i.Quantity }) });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine("CHECKOUT FAILED: " + ex);
                 return StatusCode(500, new {error = "Something went wrong."});
             }
         }
@@ -169,13 +170,26 @@ namespace ECommerceApi.Controllers
                 return NotFound();
             }
 
-            var service = new PaymentIntentService();
-
-            var intent = await service.GetAsync(order.PaymentIntentId);
-
-            if(intent.Status == "succeeded")
+            if (string.IsNullOrEmpty(order.PaymentIntentId))
             {
-                order.Status = "Paid";
+                return BadRequest(new { error = "This order has no payment to confirm." });
+            }
+
+            PaymentIntent intent;
+
+            try
+            {
+                var service = new PaymentIntentService();
+                intent = await service.GetAsync(order.PaymentIntentId);
+            }
+            catch (StripeException)
+            {
+                return StatusCode(502, new { error = "Could not reach Stripe." });
+            }
+
+            if (intent.Status == "succeeded" && order.Status != "Confirmed")
+            {
+                order.Status = "Confirmed";
                 await _context.SaveChangesAsync();
             }
 
