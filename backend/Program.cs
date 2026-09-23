@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using Azure.Identity;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using ECommerceApi.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,23 +89,24 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
+var corsSettings = builder.Configuration.GetRequiredSettings<CorsSettings>(CorsSettings.SectionName);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins(
-                "http://localhost:3000",
-                "https://ecommerce-frontend-lucianc-hjh9aahweddxbwgj.switzerlandnorth-01.azurewebsites.net"
-            )
+            .WithOrigins(corsSettings.AllowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
 
 
+var keyVaultSettings = builder.Configuration.GetRequiredSettings<KeyVaultSettings>(KeyVaultSettings.SectionName);
+
 builder.Configuration.AddAzureKeyVault(
-    new Uri("https://ecommerceapi-kv-lucianc.vault.azure.net/"),
+    new Uri(keyVaultSettings.Uri),
     new DefaultAzureCredential());
 
 
