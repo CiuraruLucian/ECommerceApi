@@ -27,7 +27,7 @@ dotnet test ECommerceApi.Tests --filter "FullyQualifiedName~OrderControllerTests
 dotnet ef migrations add <Name>            # then: dotnet ef database update
 ```
 
-Frontend (run from `frontend/`): `npm install`, `npm start` (port 3000) or `npm run dev` (nodemon).
+Frontend (run from `frontend/`): copy `.env.example` to `.env` and fill it in, then `npm install`, `npm start` (port 3000) or `npm run dev` (nodemon).
 
 ## Known state: `main` does not compile
 
@@ -49,7 +49,7 @@ Unresolved merge conflict markers (`<<<<<<< HEAD` … `>>>>>>> dev`) are committ
 
 **Caching** (`ProductsController`): `GET /api/products` caches the full list under the Redis key `products_all` (5 min TTL) via `IDistributedCache`. Every Admin write (POST/PUT/DELETE) must call `_cache.RemoveAsync("products_all")`; the other read endpoints hit the DB directly.
 
-**Frontend**: `frontend/public/js/config.js` holds `API_BASE` (currently the production Azure URL — switch it to `https://localhost:7224/api` for local work), the `jwt_token` localStorage helpers, and `apiFetch`, which attaches the bearer token and redirects to `/login` on any 401. Admin visibility is decided client-side by decoding the JWT role claim; the server's `[Authorize]` attributes are the real enforcement. API-derived values interpolated into `innerHTML` must go through `escapeHtml`.
+**Frontend**: `API_BASE_URL` and `STRIPE_PUBLISHABLE_KEY` are environment variables (locally `frontend/.env`, gitignored — copy `.env.example`; on Azure, the frontend App Service's Environment variables). `server.js` refuses to start without them and serves them to the browser as `window.APP_CONFIG` via `/js/env.js`, loaded before `config.js`. Never hardcode them in the JS. `frontend/public/js/config.js` reads them into `API_BASE` / `STRIPE_PUBLISHABLE_KEY` and holds the `jwt_token` localStorage helpers, and `apiFetch`, which attaches the bearer token and redirects to `/login` on any 401. Admin visibility is decided client-side by decoding the JWT role claim; the server's `[Authorize]` attributes are the real enforcement. API-derived values interpolated into `innerHTML` must go through `escapeHtml`.
 
 ## Workflow Rules
 - ALWAYS create a git branch before making changes

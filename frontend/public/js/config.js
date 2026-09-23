@@ -1,10 +1,11 @@
-// Change this if your API runs on a different port/host
+// Both values come from the frontend server's environment variables, served as
+// window.APP_CONFIG by /js/env.js (see server.js). Don't hardcode them here.
 
-const API_BASE = 'https://ecommerceapi-lucianc-f2cyhpc8gshuhbhb.switzerlandnorth-01.azurewebsites.net/api';
+const API_BASE = window.APP_CONFIG.apiBase;
 
 // Stripe publishable key (safe to expose in the browser). Must belong to the same
 // Stripe account and mode (test/live) as the backend's Stripe:SecretKey.
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51UAp9qBtmoU15vAoOsj32sPGuzZtJKBofgOLAzL9SzHh7YN4OXWGyTPmOtZsGG255eSyvt9GsIQjR5hzzkTaQCPN00ikjCOjHU';
+const STRIPE_PUBLISHABLE_KEY = window.APP_CONFIG.stripePublishableKey;
 
 // Safety net: warn loudly if a live key ends up wired to local testing — a live
 // publishable key paired with a local API can still process real card payments.
