@@ -19,24 +19,50 @@ async function loadOrders() {
     return;
   }
 
-  ordersContent.innerHTML = orders.map(o => `
+  ordersContent.innerHTML = orders.map(o => {
+    // Orders confirmed before the rename are stored as "Paid" — show them as Confirmed too.
+    const isConfirmed = o.status === 'Confirmed' || o.status === 'Paid';
+    const statusLabel = isConfirmed ? 'Confirmed' : o.status;
+
+    return `
     <div class="order-card">
       <div class="order-header">
         <strong>Order #${o.id}</strong>
-        <span class="status status-${o.status.toLowerCase()}">${escapeHtml(o.status)}</span>
+        <span class="status status-${statusLabel.toLowerCase()}">${escapeHtml(statusLabel)}</span>
       </div>
       <ul>
         ${o.items.map(i => `<li>${escapeHtml(i.productName)} × ${i.quantity} — $${i.unitPrice.toFixed(2)} each</li>`).join('')}
       </ul>
       <p class="order-total">Total: $${o.total.toFixed(2)}</p>
-      ${o.status !== 'Paid' ? `<button onclick="confirmPayment(${o.id})">Confirm Payment</button>` : ''}
+      ${!isConfirmed ? `<button onclick="confirmPayment(${o.id})">Confirm Payment</button>` : ''}
+      <p id="orderMsg-${o.id}" class="hidden"></p>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 async function confirmPayment(orderId) {
+  const msg = document.getElementById(`orderMsg-${orderId}`);
+  const showMsg = (text) => {
+    msg.textContent = text;
+    msg.classList.remove('hidden');
+  };
+
   const res = await apiFetch(`/order/${orderId}/confirm-payment`, { method: 'POST' });
-  if (res && res.ok) loadOrders();
+  if (!res) return;
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    showMsg(data.error || 'Could not check the payment. Please try again.');
+    return;
+  }
+
+  if (data.status === 'Confirmed') {
+    loadOrders();
+  } else {
+    showMsg(`Payment not completed yet (Stripe status: ${data.stripeStatus}).`);
+  }
 }
 
 loadOrders();

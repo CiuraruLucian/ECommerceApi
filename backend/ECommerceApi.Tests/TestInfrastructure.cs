@@ -1,6 +1,9 @@
+using ECommerceApi.Controllers;
 using ECommerceApi.Data;
 using ECommerceApi.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -73,6 +76,11 @@ public static class TestHelpers
             schemes,
             confirmation);
     }
+
+    // ProductsController caches the product list in IDistributedCache (Redis in production).
+    // Tests use a fresh in-memory cache per controller so no state leaks between tests.
+    public static ProductsController NewProductsController(AppDbContext context) =>
+        new(context, new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions())));
 
     public static IConfiguration CreateConfiguration() => new ConfigurationBuilder()
         .AddInMemoryCollection(new Dictionary<string, string?>

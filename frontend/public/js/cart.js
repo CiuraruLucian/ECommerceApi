@@ -53,21 +53,112 @@ async function removeItem(productId) {
   if (res && res.ok) loadCart();
 }
 
-checkoutBtn.addEventListener('click', async () => {
-  const res = await apiFetch('/order/checkout', { method: 'POST' });
-  if (!res) return;
+const paymentSection = document.getElementById('paymentSection');
+const paymentSummary = document.getElementById('paymentSummary');
+const payBtn = document.getElementById('payBtn');
+const payMsg = document.getElementById('payMsg');
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    statusMsg.textContent = err.error || 'Checkout failed.';
+let stripe = null;
+let elements = null;
+let currentOrder = null;
+
+function showPayMsg(text) {
+  payMsg.textContent = text;
+  payMsg.classList.remove('hidden');
+}
+
+function redirectToOrders() {
+  setTimeout(() => (window.location.href = '/orders'), 1800);
+}
+
+// Mounts Stripe's card form for the order that checkout just created.
+function showPaymentForm(order) {
+  const stripeReady = typeof Stripe !== 'undefined'
+    && !STRIPE_PUBLISHABLE_KEY.includes('REPLACE_ME')
+    && order.clientSecret;
+
+  if (!stripeReady) {
+    statusMsg.textContent = `Order #${order.id} created, but card payments are not configured yet. Redirecting to orders...`;
     statusMsg.classList.remove('hidden');
+    redirectToOrders();
     return;
   }
 
-  const order = await res.json();
-  statusMsg.textContent = `Order #${order.id} created! Total: $${order.total.toFixed(2)}. Redirecting to orders...`;
-  statusMsg.classList.remove('hidden');
-  setTimeout(() => (window.location.href = '/orders'), 1800);
+  currentOrder = order;
+
+  cartContent.classList.add('hidden');
+  checkoutBtn.classList.add('hidden');
+  statusMsg.classList.add('hidden');
+  paymentSummary.textContent = `Order #${order.id} — Total: $${order.total.toFixed(2)}`;
+  paymentSection.classList.remove('hidden');
+
+  // Mount only after the container is visible — Stripe's Payment Element needs
+  // real layout dimensions, so mounting it while #paymentSection is display:none
+  // leaves it half-initialized and confirmPayment() later fails with
+  // "elements should have a mounted Payment Element".
+  stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+  elements = stripe.elements({ clientSecret: order.clientSecret });
+  elements.create('payment').mount('#payment-element');
+}
+
+checkoutBtn.addEventListener('click', async () => {
+  checkoutBtn.disabled = true;
+
+  try {
+    const res = await apiFetch('/order/checkout', { method: 'POST' });
+    if (!res) return;
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      statusMsg.textContent = err.error || 'Checkout failed.';
+      statusMsg.classList.remove('hidden');
+      return;
+    }
+
+    showPaymentForm(await res.json());
+  } finally {
+    checkoutBtn.disabled = false;
+  }
+});
+
+payBtn.addEventListener('click', async () => {
+  payBtn.disabled = true;
+  showPayMsg('Processing payment...');
+
+  const { error, paymentIntent } = await stripe.confirmPayment({
+    elements,
+    redirect: 'if_required'
+  });
+
+  if (error) {
+    showPayMsg(error.message);
+    payBtn.disabled = false;
+    return;
+  }
+
+  if (!paymentIntent || paymentIntent.status !== 'succeeded') {
+    showPayMsg(`Payment is not complete yet (status: ${paymentIntent ? paymentIntent.status : 'unknown'}). Please try again.`);
+    payBtn.disabled = false;
+    return;
+  }
+
+  // Stripe says it worked in the browser — ask the API to verify with Stripe and
+  // flip the order to Confirmed.
+  let confirmed = false;
+  try {
+    const confirmRes = await apiFetch(`/order/${currentOrder.id}/confirm-payment`, { method: 'POST' });
+    if (confirmRes && confirmRes.ok) {
+      const data = await confirmRes.json();
+      confirmed = data.status === 'Confirmed';
+    }
+  } catch (err) {
+    console.error('confirm-payment failed:', err);
+  }
+
+  showPayMsg(confirmed
+    ? `Payment confirmed! Order #${currentOrder.id} is confirmed. Redirecting to orders...`
+    : 'Payment received. If your order still shows Pending, press "Confirm Payment" on the orders page. Redirecting...');
+  redirectToOrders();
 });
 
 loadCart();

@@ -63,7 +63,9 @@ button:hover:not(:disabled) { background: #3838c0; }
 .order-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
 .status { padding: 2px 10px; border-radius: 12px; font-size: 0.8rem; color: white; }
 .status-pending { background: #e67e22; }
-.status-paid { background: #27ae60; }
+.status-paid, .status-confirmed { background: #27ae60; }
+#paymentSection { max-width: 480px; }
+#payment-element { margin: 12px 0; }
 .order-total { font-weight: 700; }
 
 section { margin-bottom: 36px; }

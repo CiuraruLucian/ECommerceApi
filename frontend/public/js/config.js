@@ -2,6 +2,16 @@
 
 const API_BASE = 'https://ecommerceapi-lucianc-f2cyhpc8gshuhbhb.switzerlandnorth-01.azurewebsites.net/api';
 
+// Stripe publishable key (safe to expose in the browser). Must belong to the same
+// Stripe account and mode (test/live) as the backend's Stripe:SecretKey.
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_51UAp9qBtmoU15vAoOsj32sPGuzZtJKBofgOLAzL9SzHh7YN4OXWGyTPmOtZsGG255eSyvt9GsIQjR5hzzkTaQCPN00ikjCOjHU';
+
+// Safety net: warn loudly if a live key ends up wired to local testing — a live
+// publishable key paired with a local API can still process real card payments.
+if (API_BASE.includes('localhost') && STRIPE_PUBLISHABLE_KEY.startsWith('pk_live_')) {
+  console.warn('STRIPE_PUBLISHABLE_KEY is a LIVE key while API_BASE points to localhost — this will attempt real payments. Use a pk_test_ key for local development.');
+}
+
 function getToken() {
   return localStorage.getItem('jwt_token');
 }
