@@ -85,15 +85,20 @@ function showPaymentForm(order) {
   }
 
   currentOrder = order;
-  stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-  elements = stripe.elements({ clientSecret: order.clientSecret });
-  elements.create('payment').mount('#payment-element');
 
   cartContent.classList.add('hidden');
   checkoutBtn.classList.add('hidden');
   statusMsg.classList.add('hidden');
   paymentSummary.textContent = `Order #${order.id} — Total: $${order.total.toFixed(2)}`;
   paymentSection.classList.remove('hidden');
+
+  // Mount only after the container is visible — Stripe's Payment Element needs
+  // real layout dimensions, so mounting it while #paymentSection is display:none
+  // leaves it half-initialized and confirmPayment() later fails with
+  // "elements should have a mounted Payment Element".
+  stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+  elements = stripe.elements({ clientSecret: order.clientSecret });
+  elements.create('payment').mount('#payment-element');
 }
 
 checkoutBtn.addEventListener('click', async () => {
