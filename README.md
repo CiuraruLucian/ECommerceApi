@@ -4,6 +4,8 @@ A full-stack e-commerce platform built as a learning project, featuring a secure
 
 This project was built incrementally, one feature at a time, with an emphasis on understanding *why* each architectural decision was made — not just copying a tutorial. See the [Architecture Decisions](#architecture-decisions) section below for the reasoning behind some of the less obvious choices.
 
+The app is deployed to Azure (App Service, Azure SQL, Key Vault). See [DEPLOYMENT.md](DEPLOYMENT.md) for the live URLs, architecture and deployment screenshots.
+
 ---
 
 ## Screenshots
