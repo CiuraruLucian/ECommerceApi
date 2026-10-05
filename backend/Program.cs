@@ -77,11 +77,6 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = builder.Configuration["Redis:Connection"];
-});
-
 builder.Services.AddDbContext<AppDbContext>( options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<JwtService>();
 
@@ -123,6 +118,17 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 }
 
+var redisConn = builder.Configuration["Redis:Connection"];
+
+if(!string.IsNullOrWhiteSpace(redisConn))
+{
+    builder.Services.AddStackExchangeRedisCache( o => o.Configuration = redisConn );
+}
+
+else
+{
+    builder.Services.AddDistributedMemoryCache();
+}
 
 var app = builder.Build();
 
